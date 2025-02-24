@@ -1,11 +1,14 @@
+import { Box, Typography } from "@mui/material";
 import React from "react";
+import Home from "../component/HomeBrodcast/Home.tsx";
 
 const HomeBroadcast = () => {
   // console.log(localStorage.getItem("token"));
   return (
-    <div>
-      <h1> Welcome to the home broadcast page</h1>
-    </div>
+    <Box>
+      <Typography variant="h5">This is the broadcast</Typography>
+      <Home />
+    </Box>
   );
 };
 

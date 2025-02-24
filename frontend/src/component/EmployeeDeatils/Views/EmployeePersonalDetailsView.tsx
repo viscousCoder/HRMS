@@ -19,12 +19,9 @@ const EmployeePersonalDetailsView = ({
   handleEditClick,
   editMode,
   handleSaveClick,
+  isHr = true,
 }) => {
-  let random = DesignationList.find(
-    (manager) =>
-      employee?.employeedesignation && manager === employee.employeedesignation
-  );
-  console.log(random, "hii");
+  // console.log(employee, "hii");
   return (
     <Card sx={{ maxWidth: 1300, margin: "auto" }}>
       <CardHeader
@@ -81,21 +78,30 @@ const EmployeePersonalDetailsView = ({
           value={employee?.employeedesignation}
           onChange={handleInputChange}
         /> */}
-            <Autocomplete
-              options={DesignationList}
-              getOptionLabel={(option) => option}
-              value={
-                DesignationList.find(
-                  (manager) =>
-                    employee?.employeedesignation &&
-                    manager === employee.employeedesignation
-                ) || null
-              }
-              onChange={(_, value) => handleInputChange(_, value)}
-              renderInput={(params) => (
-                <TextField {...params} label="Designation" fullWidth />
-              )}
-            />
+            {isHr ? (
+              <Autocomplete
+                options={DesignationList}
+                getOptionLabel={(option) => option}
+                value={
+                  DesignationList.find(
+                    (manager) =>
+                      employee?.employeedesignation &&
+                      manager === employee.employeedesignation
+                  ) || null
+                }
+                onChange={(_, value) => handleInputChange(_, value)}
+                renderInput={(params) => (
+                  <TextField {...params} label="Designation" fullWidth />
+                )}
+              />
+            ) : (
+              <TextField
+                name="employeedesignation"
+                label="Designation"
+                fullWidth
+                value={employee?.employeedesignation}
+              />
+            )}
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -107,29 +113,39 @@ const EmployeePersonalDetailsView = ({
             />
           </Grid>
           <Grid item xs={12}>
-            <Autocomplete
-              options={managerList}
-              getOptionLabel={(option) =>
-                `${option.employeefirstname} ${option.employeelastname}`
-              }
-              value={
-                managerList.find(
-                  (manager) =>
-                    employee?.manager && manager.id === employee.manager
-                ) || null
-              }
-              onChange={(_, value) => handleInputChange(_, value)}
-              // onChange={(_, newValue) =>
-              //   setEmployee({
-              //     ...employee,
-              //     manager: newValue?.id || "",
-              //   })
-              // }
+            {isHr ? (
+              <Autocomplete
+                options={managerList}
+                getOptionLabel={(option) =>
+                  `${option.employeefirstname} ${option.employeelastname}`
+                }
+                // value={employee?.rep_manager}
+                value={
+                  managerList?.find(
+                    (manager) =>
+                      employee?.manager && manager.id === employee.manager
+                  ) || null
+                }
+                onChange={(_, value) => handleInputChange(_, value)}
+                // onChange={(_, newValue) =>
+                //   setEmployee({
+                //     ...employee,
+                //     manager: newValue?.id || "",
+                //   })
+                // }
 
-              renderInput={(params) => (
-                <TextField {...params} label="Reporting Manager" fullWidth />
-              )}
-            />
+                renderInput={(params) => (
+                  <TextField {...params} label="Reporting Manager" fullWidth />
+                )}
+              />
+            ) : (
+              <TextField
+                name="manager"
+                label="Reporting manager"
+                fullWidth
+                value={employee?.rep_manager}
+              />
+            )}
           </Grid>
         </Grid>
         {editMode && (

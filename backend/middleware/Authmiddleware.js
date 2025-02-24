@@ -3,10 +3,12 @@ const { handleCheckingToken } = require("../services/token");
 async function handleAuthetication(req, res, next) {
   // console.log(req.query);
   const token = req.header("x-token") || req.body.token;
+
   if (!token) {
     return next();
   }
   const employee = await handleCheckingToken(token);
+
   req.employee = employee;
 
   return next();

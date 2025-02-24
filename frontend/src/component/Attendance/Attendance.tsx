@@ -127,8 +127,9 @@ const Attendance = ({ isClicked }: propsType) => {
   /**first time data getting */
   useEffect(() => {
     console.log("hi");
-    const token = localStorage.getItem("token");
-    if (token) dispatch(getDetails(token));
+    // const token = localStorage.getItem("token");
+    // if (token)
+    dispatch(getDetails());
     dispatch(handleGetCalenderData());
   }, []);
   // useEffect(() => {

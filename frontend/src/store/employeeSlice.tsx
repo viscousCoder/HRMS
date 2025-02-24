@@ -19,10 +19,22 @@ interface login {
   employeePassword: string;
 }
 
+interface formData {
+  name: string;
+  email: string;
+  contact: string;
+  qualification: string;
+  resume: File | null;
+}
+
 const initialState = {
   loading: false,
   user: {},
   error: "",
+  personalDetailsLoading: false,
+  assignedLoading: false,
+  assignedList: [],
+  assignedError: "",
 };
 
 export const employeeSlice = createSlice({
@@ -58,20 +70,35 @@ export const employeeSlice = createSlice({
         state.user = {};
       })
       .addCase(getDetails.pending, (state) => {
-        state.loading = true;
+        state.personalDetailsLoading = true;
         state.user = {};
       })
       .addCase(getDetails.fulfilled, (state, action) => {
         console.log(action, "hii", action.payload);
-        state.loading = false;
+        state.personalDetailsLoading = false;
         state.user = action.payload;
-        toast.success("User Successful");
+        // toast.success("User Successful");
       })
       .addCase(getDetails.rejected, (state, action) => {
-        state.loading = false;
+        state.personalDetailsLoading = false;
         state.error = action.error.message || "something wnet wrong";
         toast.error(action.error.message);
         state.user = {};
+      })
+
+      //assigned
+      .addCase(getAssignedCandidatesForManager.pending, (state) => {
+        state.assignedLoading = true;
+      })
+      .addCase(getAssignedCandidatesForManager.fulfilled, (state, action) => {
+        state.assignedLoading = false;
+        state.assignedList = action.payload.candidates; // Store the list of assigned candidates
+      })
+      .addCase(getAssignedCandidatesForManager.rejected, (state, action) => {
+        state.assignedLoading = false;
+        state.assignedError =
+          action.error.message || "Failed to fetch assigned candidates";
+        toast.error(state.assignedError);
       });
   },
 });
@@ -115,6 +142,7 @@ export const loginEmployee = createAsyncThunk(
         // console.log(response.data);
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.employeedesignation);
+        localStorage.setItem("id", data.id);
         navigate("/");
 
         return response.data;
@@ -125,21 +153,118 @@ export const loginEmployee = createAsyncThunk(
   }
 );
 
-export const getDetails = createAsyncThunk(
-  "/getDetails",
-  async (payload: string) => {
+export const getDetails = createAsyncThunk("/getDetails", async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get(`${apiUrl}/getDetails`, {
+      headers: {
+        "x-token": token,
+      },
+    });
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    console.log(error, "Employee details", error.response.data.error);
+    throw new Error(error.response.data.error);
+  }
+});
+
+export const handleCurrEmployeeUpdate = createAsyncThunk(
+  "/currEmployeeUpate",
+  async (payload) => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${apiUrl}/getDetails`, {
-        headers: {
-          "x-token": payload,
-        },
-      });
+      const response = await axios.post(
+        `${apiUrl}/currentUserPerUpdate`,
+        payload,
+        {
+          headers: {
+            "x-token": token,
+          },
+        }
+      );
       if (response.status === 200) {
         return response.data;
       }
     } catch (error) {
-      console.log(error, "Employee details", error.response.data.error);
-      throw new Error(error.response.data.error);
+      console.log(error, "Employee updateing error");
+      throw new Error(error);
+    }
+  }
+);
+
+// export const handleReferral = createAsyncThunk(
+//   "/referral",
+//   async (payload: formData) => {
+//     console.log("payload", payload);
+//     const token = localStorage.getItem("token");
+//     try {
+//       const response = await axios.post(`${apiUrl}/referral`, payload, {
+//         headers: {
+//           "x-token": token,
+//         },
+//       });
+//       console.log(response, payload);
+//     } catch (error) {
+//       console.log(error, "Employee referral error");
+//       throw new Error(error);
+//     }
+//   }
+// );
+
+export const handleReferral = createAsyncThunk(
+  "/referral",
+  async (payload: { [key: string]: any }) => {
+    console.log("payload", payload);
+    const token = localStorage.getItem("token");
+
+    const formData = new FormData();
+    formData.append("candidate_name", payload.name);
+    formData.append("candidate_email", payload.email);
+    formData.append("candidate_contact", payload.contact);
+    formData.append("qualification", payload.qualification);
+    if (payload.resume) {
+      formData.append("resume_file", payload.resume);
+      console.log("File appended:", payload.resume);
+    }
+
+    try {
+      const response = await axios.post(`${apiUrl}/referral`, formData, {
+        headers: {
+          "x-token": token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error submitting referral:", error);
+    }
+  }
+);
+
+export const getAssignedCandidatesForManager = createAsyncThunk(
+  "/getAssignedCandidatesForManager",
+  async (managerId: string) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.get(
+        `${apiUrl}/referral/assignlist/${managerId}`,
+        {
+          headers: {
+            "x-token": token,
+          },
+        }
+      );
+
+      return response.data; // This will return the list of candidates assigned to the manager
+    } catch (error) {
+      console.error("Error fetching assigned candidates for manager:", error);
+      throw new Error(
+        error.response?.data?.message || "Error fetching candidates"
+      );
     }
   }
 );

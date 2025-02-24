@@ -12,7 +12,14 @@ const Rootfile = () => {
       <Box height={30} />
       <Box sx={{ display: "flex" }}>
         <Sidebar isOpen={isOpen} />
-        <Box sx={{ flexGrow: 1, m: 10, boxSizing: "border-box", width: "65%" }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            m: { xs: 4, md: 10 },
+            boxSizing: "border-box",
+            width: "65%",
+          }}
+        >
           <Outlet />
         </Box>
       </Box>

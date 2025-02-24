@@ -1,0 +1,8 @@
+.conatiner {
+  min-height: 50px;
+  overflow: hidden;
+}
+
+.card {
+  margin: 10px;
+}

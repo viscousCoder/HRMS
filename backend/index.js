@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const pg = require("pg");
 const cors = require("cors");
+const cloudinary = require("cloudinary");
 
 const { getConnection } = require("./database/database");
 const userAuthRouter = require("./routes/userAuth");
@@ -11,6 +12,7 @@ const {
   handleAuthetication,
   handleAutharization,
 } = require("./middleware/Authmiddleware");
+const { initializeDatabase } = require("./database/initializeDb");
 
 const app = express();
 
@@ -26,11 +28,18 @@ app.use(
 
 async function init() {
   try {
+    // cloudinary.config({
+    //   cloud_name: process.env.CLOUDINARY_NAME,
+    //   api_key: process.env.CLOUDINARY_API_KEY,
+    //   api_secret: process.env.CLOUDINARY_API_SECRET,
+    // });
     const db = await getConnection();
-    app.use(express.urlencoded({ extended: false }));
+    app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
+    // app.use(fileUpload());
     app.use(handleAuthetication);
 
+    await initializeDatabase();
     //get route
     app.get("/", async (req, res) => {
       try {
@@ -45,7 +54,7 @@ async function init() {
     //user routes
     app.use("/", userAuthRouter);
     app.use("/", calenderRouter);
-    app.use("/", handleAutharization(["hr"]), hrRouter);
+    app.use("/", handleAutharization(["HR"]), hrRouter);
 
     app.listen(port, () => console.log(`server is runnig at port ${port}`));
   } catch (err) {

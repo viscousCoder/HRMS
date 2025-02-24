@@ -16,15 +16,18 @@ const EmployeeLeavesDetailsView = ({
   handleInputChange,
   editMode,
   handleSaveClick,
+  isHr = true,
 }) => {
   return (
     <Card sx={{ maxWidth: 1300, margin: "auto" }}>
       <CardHeader
         title="Employee Leaves Details"
         action={
-          <IconButton onClick={handleEditClick}>
-            <EditIcon />
-          </IconButton>
+          isHr && (
+            <IconButton onClick={handleEditClick}>
+              <EditIcon />
+            </IconButton>
+          )
         }
       />
       <CardContent>
@@ -35,7 +38,7 @@ const EmployeeLeavesDetailsView = ({
               label="Casual Leaves"
               fullWidth
               value={employee?.casual_leaves}
-              onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -44,7 +47,8 @@ const EmployeeLeavesDetailsView = ({
               label="Sick Leave"
               fullWidth
               value={employee?.sick_leaves}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -53,7 +57,8 @@ const EmployeeLeavesDetailsView = ({
               label="Earned Leaves"
               fullWidth
               value={employee?.earned_leaves}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -62,7 +67,8 @@ const EmployeeLeavesDetailsView = ({
               label="Breavement Leaves"
               fullWidth
               value={employee?.breavement_leaves}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -71,7 +77,8 @@ const EmployeeLeavesDetailsView = ({
               label="Maternity_Leaves"
               fullWidth
               value={employee?.maternity_leaves}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -89,7 +96,8 @@ const EmployeeLeavesDetailsView = ({
               label="Total Leaves"
               fullWidth
               value={employee?.total_leaves}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={isHr ? handleInputChange : null}
               disabled
             />
           </Grid>

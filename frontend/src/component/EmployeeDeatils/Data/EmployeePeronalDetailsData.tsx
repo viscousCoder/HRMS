@@ -43,7 +43,7 @@ const EmployeePeronalDetailsData: React.FC = () => {
   const { id } = useParams();
   const data = useSelector<RootState>((state) => state.hr.selectEmployeeData);
   const managerList = useSelector<RootState>((state) =>
-    state.hr.emloyeelist.filter(
+    state.hr.emloyeeList?.filter(
       (item) => item.employeedesignation === "Manager"
     )
   );
@@ -73,7 +73,7 @@ const EmployeePeronalDetailsData: React.FC = () => {
     );
     setEditMode(false);
   };
-
+  console.log(employee, "hello", managerList);
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     values: EmployeeData
@@ -91,6 +91,8 @@ const EmployeePeronalDetailsData: React.FC = () => {
           ? setEmployee({
               ...employee,
               manager: values?.id || "",
+              rep_manager:
+                values?.employeefirstname + " " + values?.employeelastname,
             })
           : setEmployee({ ...employee, employeedesignation: values });
       }

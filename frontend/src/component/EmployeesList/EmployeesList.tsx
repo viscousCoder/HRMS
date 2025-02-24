@@ -92,13 +92,17 @@ interface formValues {
 
 export default function TableComponent() {
   const dispatch = useDispatch<AppDispatch>();
-  const employeesList = useSelector<RootState>((state) => state.hr.emloyeelist);
+  const employeesList = useSelector<RootState>(
+    (state) => state.hr.employeeList
+  );
   const navigate = useNavigate();
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) dispatch(allEmployeesList(token));
   }, []);
+
+  console.log(employeesList, "hii");
 
   const rows = employeesList?.map((user) => {
     return {

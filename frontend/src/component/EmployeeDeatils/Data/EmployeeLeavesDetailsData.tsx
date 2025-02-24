@@ -30,14 +30,6 @@ const EmployeeLeavesDetailsData: React.FC = () => {
   const [employee, setEmployee] = useState<EmployeeData | null>(null);
   const [editMode, setEditMode] = useState(false);
 
-  const DesignationList = [
-    "HR",
-    "Manager",
-    "Trainee",
-    "Enigneer",
-    "Junior Developer",
-  ];
-
   const { id } = useParams();
   const data = useSelector<RootState>((state) => state.hr.selectEmployeeData);
 

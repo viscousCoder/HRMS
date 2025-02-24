@@ -28,7 +28,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-  overflowX: "hidden",
+  // overflowX: "hidden",
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -36,7 +36,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  overflowX: "hidden",
+  // overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -132,7 +132,16 @@ export default function Sidebar({ isOpen }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Home", "Attendance", "EmployeeList"].map((text, index) => (
+          {[
+            "Home",
+            "Attendance",
+            "EmployeeList",
+            "Profile",
+            "Blog",
+            "Referral",
+            "Referral-List",
+            "Assign-list",
+          ].map((text, index) => (
             <ListItem
               key={text}
               disablePadding
