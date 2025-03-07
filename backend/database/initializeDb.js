@@ -50,6 +50,25 @@ async function initializeDatabase() {
 )
 `);
 
+    await db.query(`CREATE TABLE IF NOT EXISTS todo_table (
+    todo_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    due_date DATE NOT NULL CHECK (due_date >= CURRENT_DATE),
+    status VARCHAR(40) NOT NULL DEFAULT 'Pending' CHECK (status IN ('Pending', 'Progress', 'Completed')),
+    priority VARCHAR(30) NOT NULL DEFAULT 'Low' CHECK (priority IN ('Low', 'Medium', 'High')),
+    employee_id INTEGER NOT NULL REFERENCES employeesdetails(id) ON DELETE CASCADE
+)
+`);
+    await db.query(`CREATE TABLE IF NOT EXISTS blob_table (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER REFERENCES employeesdetails(id),
+  base64_data TEXT, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+`);
+
     console.log("Database initialized successfully.");
   } catch (error) {
     console.error("Error initializing database:", error);

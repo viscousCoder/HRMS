@@ -138,9 +138,11 @@ export default function Sidebar({ isOpen }) {
             "EmployeeList",
             "Profile",
             "Blog",
+            "Employee-Blog",
             "Referral",
             "Referral-List",
             "Assign-list",
+            "Todo",
           ].map((text, index) => (
             <ListItem
               key={text}

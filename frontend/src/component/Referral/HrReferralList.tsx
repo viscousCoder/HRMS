@@ -277,7 +277,9 @@ export default function HrReferralList() {
             onClick={(e) => handleClickAssign(e, params.row)}
             disabled={
               params.row.candidateStatus === "REJECT" ||
-              params.row.candidateSelected === "ASSIGNED"
+              params.row.candidateSelected === "ASSIGNED" ||
+              params.row.candidateSelected === "SELECTED" ||
+              params.row.candidateSelected === "REJECTED"
             }
           >
             <PeopleIcon />

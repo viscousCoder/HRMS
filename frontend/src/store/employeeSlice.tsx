@@ -14,6 +14,22 @@ export interface formValues {
   employeeGender: string;
   employeeDesignation: string;
 }
+
+export interface TodoFormValues {
+  title: string;
+  description: string;
+  due_date: string;
+  status: string;
+  priority: string;
+}
+export interface TodoUpdateFormValues {
+  id: number;
+  title: string;
+  description: string;
+  due_date: string;
+  status: string;
+  priority: string;
+}
 interface login {
   employeeEmail: string;
   employeePassword: string;
@@ -35,6 +51,20 @@ const initialState = {
   assignedLoading: false,
   assignedList: [],
   assignedError: "",
+  /**todod */
+  todoLoading: false,
+  todoData: [],
+  todoError: "",
+
+  /**Allemployee */
+  allLoading: false,
+  allEmployee: [],
+  allError: "",
+
+  /**blog */
+  allBlogLoading: false,
+  allBlogData: [],
+  allBlogError: "",
 };
 
 export const employeeSlice = createSlice({
@@ -99,6 +129,48 @@ export const employeeSlice = createSlice({
         state.assignedError =
           action.error.message || "Failed to fetch assigned candidates";
         toast.error(state.assignedError);
+      })
+      //gettodo item
+
+      .addCase(handleGetTodoItem.pending, (state) => {
+        state.todoLoading = true;
+      })
+      .addCase(handleGetTodoItem.fulfilled, (state, action) => {
+        state.todoLoading = false;
+        state.todoData = action.payload; // Store the list of assigned candidates
+      })
+      .addCase(handleGetTodoItem.rejected, (state, action) => {
+        state.todoLoading = false;
+        state.todoError =
+          action.error.message || "Failed to fetch assigned candidates";
+        toast.error(state.assignedError);
+      })
+      //getting all employee
+      .addCase(getAllEmployee.pending, (state) => {
+        state.allLoading = true;
+      })
+      .addCase(getAllEmployee.fulfilled, (state, action) => {
+        state.allLoading = false;
+        state.allEmployee = action.payload;
+      })
+      .addCase(getAllEmployee.rejected, (state, action) => {
+        state.allLoading = false;
+        state.allError =
+          action.error.message || "Failed to fetch assigned candidates";
+        // toast.error(state.assignedError);
+      })
+      .addCase(getBlog.pending, (state) => {
+        state.allBlogLoading = true;
+      })
+      .addCase(getBlog.fulfilled, (state, action) => {
+        state.allBlogLoading = false;
+        state.allBlogData = action.payload;
+      })
+      .addCase(getBlog.rejected, (state, action) => {
+        state.allBlogLoading = false;
+        state.allBlogError =
+          action.error.message || "Failed to fetch assigned candidates";
+        // toast.error(state.assignedError);
       });
   },
 });
@@ -268,6 +340,174 @@ export const getAssignedCandidatesForManager = createAsyncThunk(
     }
   }
 );
+
+/**todo */
+export const handleCreateTodo = createAsyncThunk(
+  "/todo",
+  async ({
+    payload,
+  }: // navigate,
+  {
+    payload: TodoFormValues;
+    // navigate: (path: string) => void;
+  }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${apiUrl}/todo`, payload, {
+        headers: {
+          "x-token": token,
+        },
+      });
+      if (response.status === 201) {
+        // navigate("/");
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error creating todo");
+    }
+  }
+);
+/**get todo item list */
+export const handleGetTodoItem = createAsyncThunk(
+  "/todo/status",
+  async ({ status }: { status: string }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${apiUrl}/todo/${status}`, {
+        headers: {
+          "x-token": token,
+        },
+      });
+      if (response.status === 200) {
+        console.log(response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error, "getting todo item");
+    }
+  }
+);
+/**update todo */
+export const handleUpdateTodo = createAsyncThunk(
+  "/todo/update",
+  async ({
+    payload,
+  }: // navigate,
+  {
+    payload: TodoUpdateFormValues;
+    // navigate: (path: string) => void;
+  }) => {
+    try {
+      const token = localStorage.getItem("token");
+      const id = payload.id;
+      const response = await axios.patch(`${apiUrl}/todo/${id}`, payload, {
+        headers: {
+          "x-token": token,
+        },
+      });
+      if (response.status === 200) {
+        toast.success("Update Successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Error while Updating the todo");
+    }
+  }
+);
+
+/**delete Todo */
+export const handleDeleteTodo = createAsyncThunk(
+  "/todo/delete",
+  async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`${apiUrl}/todo/${id}`, {
+        headers: {
+          "x-token": token,
+        },
+      });
+      if (response.status === 200) {
+        toast.success("Todo Deleted Successfully");
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error, "While delete todod");
+      toast.error("Error while deleting Todo");
+    }
+  }
+);
+
+/**getting all employe */
+export const getAllEmployee = createAsyncThunk(
+  "/get/allEmployee",
+  async (payload: string) => {
+    try {
+      const response = await axios.get(`${apiUrl}/get/allEmployee`, {
+        headers: {
+          "x-token": payload,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error, "Employee list");
+      throw new Error(error.response.data.error);
+    }
+  }
+);
+
+/**posting blob */
+
+export const postBlog = createAsyncThunk(
+  "/post/blog",
+  async ({
+    payload,
+    navigate,
+  }: {
+    payload: string;
+    navigate: (path: string) => void;
+  }) => {
+    try {
+      console.log("Comment", payload);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${apiUrl}/post/blog`,
+        { base64_data: payload },
+        {
+          headers: {
+            "x-token": token,
+          },
+        }
+      );
+      if (response.status === 201) {
+        navigate("/");
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      // toast.error("Error creating todo");
+    }
+  }
+);
+
+export const getBlog = createAsyncThunk("/blog", async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${apiUrl}/blog`, {
+      headers: {
+        "x-token": token,
+      },
+    });
+    if (response.status === 200) {
+      // console.log(response.data.data);
+      return response.data.data;
+    }
+  } catch (error) {
+    console.log(error, "getting todo item");
+  }
+});
 
 export const {} = employeeSlice.actions;
 export default employeeSlice.reducer;

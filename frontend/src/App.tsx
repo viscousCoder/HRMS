@@ -15,6 +15,7 @@ import ReferralPage from "./pages/ReferralPage/ReferralPage.tsx";
 import ReferalTablePage from "./pages/ReferralPage/ReferalTablePage.tsx";
 import AssignReferralPage from "./pages/ReferralPage/AssignReferralPage.tsx";
 import TodoListPage from "./pages/TodoPage/TodoListPage.tsx";
+import BlogAboutEmployee from "./component/BlogAboutEmployee/BlogAboutEmployee.tsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -54,6 +55,10 @@ function App() {
         {
           path: "blog",
           element: <BlogPage />,
+        },
+        {
+          path: "Employee-Blog",
+          element: <BlogAboutEmployee />,
         },
         {
           path: "referral",

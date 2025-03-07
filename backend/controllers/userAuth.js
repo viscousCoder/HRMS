@@ -343,7 +343,245 @@ async function updateReferralAssignmentStatus(req, res) {
   }
 }
 
-module.exports = {};
+/**Todo section */
+
+/**created todo list item */
+
+async function handleTodoCreation(req, res) {
+  try {
+    // console.log(req.body, req.employee);
+    const db = await getConnection();
+    const { title, description, due_date, status, priority } = req.body;
+    const { rows } = await db.query(
+      `
+      INSERT INTO todo_table(title,description,due_date,status,priority,employee_id)
+      VALUES($1,$2,$3,$4,$5,$6)
+      `,
+      [title, description, due_date, status, priority, req.employee.employeeid]
+    );
+    res.status(201).json({
+      message: "Successfull Added",
+      data: rows,
+    });
+  } catch (error) {
+    console.log(error, "Error in todod");
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**geting todo item */
+async function handleGetTodoItem(req, res) {
+  try {
+    const db = await getConnection();
+    const { status } = req.params;
+    const employeeId = req.employee.employeeid;
+
+    const query =
+      status && status !== "All"
+        ? "SELECT todo_id, title, description, TO_CHAR(due_date, 'YYYY-MM-DD') AS due_date, status, priority FROM todo_table WHERE employee_id = $1 AND status = $2"
+        : "SELECT todo_id, title, description, TO_CHAR(due_date, 'YYYY-MM-DD') AS due_date, status, priority FROM todo_table WHERE employee_id = $1";
+
+    const values =
+      status && status !== "All" ? [employeeId, status] : [employeeId];
+
+    const { rows } = await db.query(query, values);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error while fetching todo items:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+}
+
+/**updating todo item */
+async function handleTodoUpdate(req, res) {
+  try {
+    const db = await getConnection();
+    const { id } = req.params;
+    const { title, description, due_date, status, priority } = req.body;
+    const employeeId = req.employee.employeeid;
+
+    const { rowCount } = await db.query(
+      `
+      UPDATE todo_table
+      SET title = $1, description = $2, due_date = $3, status = $4, priority = $5
+      WHERE todo_id = $6 AND employee_id = $7
+      `,
+      [title, description, due_date, status, priority, id, employeeId]
+    );
+
+    if (rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "TODO not found or unauthorized" });
+    }
+
+    res.status(200).json({
+      message: "Successfully Updated",
+    });
+  } catch (error) {
+    console.log(error, "Error in updating TODO");
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**deleting todo */
+async function handleTodoDelete(req, res) {
+  try {
+    const db = await getConnection();
+    const { id } = req.params;
+    const employeeId = req.employee.employeeid;
+
+    const { rowCount } = await db.query(
+      `
+      DELETE FROM todo_table
+      WHERE todo_id = $1 AND employee_id = $2
+      `,
+      [id, employeeId]
+    );
+
+    if (rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "TODO not found or unauthorized" });
+    }
+
+    res.status(200).json({
+      message: "Successfully Deleted",
+    });
+  } catch (error) {
+    console.log(error, "Error in deleting TODO");
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**getting all employee list */
+async function handleAllEmployeeData(req, res) {
+  try {
+    const db = await getConnection();
+    const { rows: employeeList } = await db.query(
+      "SELECT * FROM employeesdetails ORDER BY id ASC"
+    );
+    res.status(200).json(employeeList);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**BLOG Section */
+/**creating blob */
+// async function handleBlobCreation(req, res) {
+//   try {
+//     const db = await getConnection();
+//     console.log(base64_data, "Data");
+//     const { blob_url } = req.body;
+//     const { employeeid } = req.employee;
+
+//     const { rows } = await db.query(
+//       `
+//       INSERT INTO blob_table(employee_id, blob_url)
+//       VALUES($1, $2)
+//       RETURNING id, employee_id, blob_url, created_at, updated_at
+//       `,
+//       [employeeid, blob_url]
+//     );
+//     console.log(rows[0], "here", rows);
+//     res.status(201).json({
+//       message: "Blob successfully added",
+//       data: rows[0],
+//     });
+//   } catch (error) {
+//     console.error("Error in blob creation", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// }
+async function handleBlobCreation(req, res) {
+  try {
+    const db = await getConnection();
+
+    const { base64_data } = req.body;
+    const { employeeid } = req.employee;
+
+    // Ensure that the Base64 data is valid
+    if (!base64_data || typeof base64_data !== "string") {
+      console.log("Error in base64");
+      return res.status(400).json({ error: "Invalid Base64 data" });
+    }
+
+    const { rows } = await db.query(
+      `
+      INSERT INTO blob_table(employee_id, base64_data)
+      VALUES($1, $2)
+      RETURNING id, employee_id, base64_data, created_at, updated_at
+      `,
+      [employeeid, base64_data] // Insert Base64 data instead of blob_url
+    );
+
+    // console.log(rows[0], "here", rows);
+
+    res.status(201).json({
+      message: "Blob successfully added",
+      data: rows[0],
+    });
+  } catch (error) {
+    console.error("Error in blob creation", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+/**geting all blogs */
+// async function getAllBlobs(req, res) {
+//   try {
+//     const db = await getConnection();
+
+//     const { rows } = await db.query(`SELECT * FROM blob_table`);
+
+//     if (rows.length === 0) {
+//       return res.status(404).json({
+//         message: "No blobs found in the table",
+//       });
+//     }
+//     console.log(rows, "getting");
+//     res.status(200).json({
+//       message: "Blobs retrieved successfully",
+//       data: rows,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching blobs", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// }
+/** Getting all blobs with all employee details */
+async function getAllBlobs(req, res) {
+  try {
+    const db = await getConnection();
+
+    // Select all columns from both tables using *
+    const { rows } = await db.query(`
+      SELECT 
+        bt.*,  -- All columns from blob_table
+        ed.*   -- All columns from employeesdetails
+      FROM blob_table bt
+      LEFT JOIN employeesdetails ed ON bt.employee_id = ed.id
+    `);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "No blobs found in the table",
+      });
+    }
+
+    console.log(rows, "Retrieved blobs with all employee details");
+    res.status(200).json({
+      message: "Blobs and all employee details retrieved successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("Error fetching blobs with all employee details", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 module.exports = {
   handleUserRegister,
@@ -355,4 +593,11 @@ module.exports = {
   getAssignedCandidatesForManager,
   // handleUpdateReferralAssign,
   updateReferralAssignmentStatus,
+  handleTodoCreation,
+  handleGetTodoItem,
+  handleTodoUpdate,
+  handleTodoDelete,
+  handleAllEmployeeData,
+  handleBlobCreation,
+  getAllBlobs,
 };
