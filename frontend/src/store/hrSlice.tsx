@@ -222,6 +222,7 @@ export const assignManagerToReferral = createAsyncThunk(
         },
       });
       if (response.status === 200) {
+        console.log(response.data, "Data of assign");
         return response.data;
       }
     } catch (error) {
@@ -270,8 +271,10 @@ export const fetchAssignedManagers = createAsyncThunk(
         throw new Error("Failed to fetch assigned managers");
       }
 
-      console.log("reduc", response.data.assignedManagers);
-      return response.data.assignedManagers; // Assuming the response contains this structure
+      // console.log("reduc", response.data.assignedManagers);
+      // return response.data.assignedManagers; // Assuming the response contains this structure
+      console.log("reduc", response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }

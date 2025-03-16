@@ -9,6 +9,7 @@ import {
   handleUpdateEmployee,
 } from "../../../store/hrSlice.tsx";
 import { AppDispatch, RootState } from "../../../store/store.tsx";
+import Loading from "../../Loading/Loading.tsx";
 
 type EmployeeData = {
   employeefirstname: string;
@@ -33,19 +34,22 @@ const EmployeePeronalDetailsData: React.FC = () => {
     ReportingManager[]
   >([]);
   const DesignationList = [
-    "HR",
-    "Manager",
-    "Trainee",
-    "Enigneer",
-    "Junior Developer",
+    "hr",
+    "manager",
+    "trainee",
+    "enigneer",
+    "junior developer",
   ];
 
   const { id } = useParams();
   const data = useSelector<RootState>((state) => state.hr.selectEmployeeData);
   const managerList = useSelector<RootState>((state) =>
-    state.hr.emloyeeList?.filter(
-      (item) => item.employeedesignation === "Manager"
+    state.hr.employeeList?.filter(
+      (item) => item.employeedesignation === "manager"
     )
+  );
+  const loading = useSelector<RootState>(
+    (state) => state.hr.selectEmployeeLoading
   );
   useEffect(() => {
     setEmployee(data);
@@ -103,15 +107,19 @@ const EmployeePeronalDetailsData: React.FC = () => {
 
   return (
     <Fragment>
-      <EmployeePersonalDetailsView
-        employee={employee}
-        handleInputChange={handleInputChange}
-        editMode={editMode}
-        managerList={managerList}
-        DesignationList={DesignationList}
-        handleEditClick={handleEditClick}
-        handleSaveClick={handleSaveClick}
-      />
+      {loading ? (
+        <Loading />
+      ) : (
+        <EmployeePersonalDetailsView
+          employee={employee}
+          handleInputChange={handleInputChange}
+          editMode={editMode}
+          managerList={managerList}
+          DesignationList={DesignationList}
+          handleEditClick={handleEditClick}
+          handleSaveClick={handleSaveClick}
+        />
+      )}
     </Fragment>
   );
 };

@@ -45,8 +45,9 @@ const AssignReferralList = () => {
       candidatePhoneNumber: user.candidate_phone_number,
       candidateQualification: user.candidate_qualification,
       candidateResume: user.candidate_resume, // Assuming it's a URL
-      employeeName: user.employeefirstname + " " + user.employeelastname,
-      employeeEmail: user.employeeemail,
+      // employeeName: user.employeefirstname + " " + user.employeelastname,
+      employeeName: user.referred_by,
+      employeeEmail: user.referred_by_email,
       candidateStatus: user.status,
       candidateRound: user.candidate_round,
     };

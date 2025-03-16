@@ -24,7 +24,7 @@ const token = localStorage.getItem("token");
 export const handleGetCalenderData = createAsyncThunk(
   "/getCalenderData",
   async () => {
-    // console.log("hi inside slice");
+    console.log("hi inside slice", token);
     try {
       const response = await axios.get(`${apiUrl}/calenderData`, {
         headers: { "x-token": token },

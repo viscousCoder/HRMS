@@ -104,7 +104,7 @@ export const employeeSlice = createSlice({
         state.user = {};
       })
       .addCase(getDetails.fulfilled, (state, action) => {
-        console.log(action, "hii", action.payload);
+        // console.log(action, "hii", action.payload);
         state.personalDetailsLoading = false;
         state.user = action.payload;
         // toast.success("User Successful");
@@ -213,7 +213,7 @@ export const loginEmployee = createAsyncThunk(
         const data = response.data;
         // console.log(response.data);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.employeedesignation);
+        localStorage.setItem("role", data.designation);
         localStorage.setItem("id", data.id);
         navigate("/");
 

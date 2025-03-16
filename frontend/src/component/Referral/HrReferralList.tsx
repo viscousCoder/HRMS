@@ -63,7 +63,8 @@ export default function HrReferralList() {
       candidatePhoneNumber: user.candidate_phone_number,
       candidateQualification: user.candidate_qualification,
       candidateResume: user.candidate_resume,
-      employeeName: user.employeefirstname + user.employeelastname,
+      employeeName: user.employeefirstname + " " + user.employeelastname,
+      // employeeName: user.referred_by,
       employeeEmail: user.employeeemail,
       candidateStatus: user.candidate_status,
       candidateRound: user.candidate_round,
@@ -346,10 +347,11 @@ export default function HrReferralList() {
                 assignedManagers.some(
                   (assignedManager) => assignedManager.manager_id === emp.id
                 );
+              console.log(isAssigned, "Data", assignedManagers);
 
               const isManagerOrLead =
-                emp.employeedesignation === "Manager" ||
-                emp.employeedesignation === "Team Lead";
+                emp.employeedesignation === "manager" ||
+                emp.employeedesignation === "team Lead";
 
               if (!isManagerOrLead) return null;
 

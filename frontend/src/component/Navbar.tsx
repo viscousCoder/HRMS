@@ -18,9 +18,9 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import {
   Avatar,
+  Divider,
   Drawer,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -31,7 +31,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store.tsx";
 import { getAllEmployee } from "../store/employeeSlice.tsx";
 import Image from "../Data.png";
-import Loading from "./Loading/Loading.tsx";
+import BlogIcon from "@mui/icons-material/LibraryBooks";
+import ReferralIcon from "@mui/icons-material/Group";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import HomeIcon from "@mui/icons-material/Home";
+import CoPresentIcon from "@mui/icons-material/CoPresent";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import ContactEmergencyIcon from "@mui/icons-material/ContactEmergency";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -86,9 +96,7 @@ export default function Navbar({ setIsOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
-  const allLoading = useSelector<RootState>(
-    (state) => state.employee.allLoading
-  );
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -115,6 +123,12 @@ export default function Navbar({ setIsOpen }) {
     handleMobileMenuClose();
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    handleMenuClose();
+    navigate("/login");
+  };
+
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -137,7 +151,7 @@ export default function Navbar({ setIsOpen }) {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -201,6 +215,66 @@ export default function Navbar({ setIsOpen }) {
       dispatch(getAllEmployee(token)); // Dispatch API call
     }
   }, [location, dispatch]);
+
+  // States to manage dropdown visibility
+  const [blogOpen, setBlogOpen] = React.useState(false);
+  const [referralOpen, setReferralOpen] = React.useState(false);
+  // Handlers to toggle dropdowns
+  const handleBlogClick = () => setBlogOpen(!blogOpen);
+  const handleReferralClick = () => setReferralOpen(!referralOpen);
+
+  const hrRoutes = [
+    { name: "Home", icon: <HomeIcon />, path: "/" },
+    { name: "Attendance", icon: <CoPresentIcon />, path: "/attendance" },
+    {
+      name: "EmployeeList",
+      icon: <FormatListNumberedIcon />,
+      path: "/employeelist",
+    },
+    { name: "Profile", icon: <InboxIcon />, path: "/profile" },
+    { name: "Blog", icon: <BlogIcon />, path: "/blog", isDropdown: true },
+
+    {
+      name: "Referral",
+      icon: <ReferralIcon />,
+      path: "/referral",
+      isDropdown: true,
+    },
+
+    { name: "Todo", icon: <InboxIcon />, path: "/todo" },
+  ];
+
+  const managerRoutes = [
+    { name: "Home", icon: <HomeIcon />, path: "/" },
+    { name: "Attendance", icon: <CoPresentIcon />, path: "/attendance" },
+    { name: "Profile", icon: <InboxIcon />, path: "/profile" },
+    { name: "Blog", icon: <BlogIcon />, path: "/blog", isDropdown: true },
+    {
+      name: "Referral",
+      icon: <ReferralIcon />,
+      path: "/referral",
+      isDropdown: true,
+    },
+    { name: "Todo", icon: <InboxIcon />, path: "/todo" },
+  ];
+
+  const otherRoutes = [
+    { name: "Home", icon: <HomeIcon />, path: "/" },
+    { name: "Attendance", icon: <CoPresentIcon />, path: "/attendance" },
+    { name: "Profile", icon: <InboxIcon />, path: "/profile" },
+    { name: "Blog", icon: <BlogIcon />, path: "/blog", isDropdown: true },
+    {
+      name: "Referral",
+      icon: <ReferralIcon />,
+      path: "/referral",
+      isDropdown: true,
+    },
+    { name: "Todo", icon: <InboxIcon />, path: "/todo" },
+  ];
+  const role = localStorage.getItem("role");
+  const routes =
+    role === "hr" ? hrRoutes : role === "Manager" ? managerRoutes : otherRoutes;
+
   return (
     <>
       {/* {allLoading ? (
@@ -292,62 +366,126 @@ export default function Navbar({ setIsOpen }) {
           color="gray"
           sx={{ display: { md: "none", sx: "flex" } }}
         >
-          <List sx={{ mt: 6 }}>
-            {["Home", "About", "Contact"].map((text, index) => (
-              <ListItem
-                key={text}
-                disablePadding
-                sx={{ display: "block" }}
-                onClick={() => navigate(`/${text.toLowerCase()}`)}
-              >
-                <ListItemButton
-                  sx={[
-                    {
-                      minHeight: 48,
-                      px: 2.5,
-                    },
-                    open
-                      ? {
-                          justifyContent: "initial",
+          <Box height={40}></Box>
+          <Divider />
+          <List>
+            {routes.map((item, index) => (
+              <div key={index}>
+                {/* Handle dropdowns for Blog and Referral */}
+                {item.isDropdown ? (
+                  <>
+                    <ListItemButton
+                      onClick={
+                        item.name === "Blog"
+                          ? handleBlogClick
+                          : handleReferralClick
+                      }
+                    >
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText
+                        primary={item.name}
+                        sx={
+                          {
+                            // opacity: isOpen ? 1 : 0, // Hide text when closed
+                          }
                         }
-                      : {
-                          justifyContent: "center",
-                        },
-                  ]}
-                >
-                  <ListItemIcon
-                    sx={[
-                      {
-                        minWidth: 0,
-                        justifyContent: "center",
-                      },
-                      open
-                        ? {
-                            mr: 3,
-                          }
-                        : {
-                            mr: "auto",
-                          },
-                    ]}
-                  >
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={text}
-                    sx={[
-                      open
-                        ? {
-                            opacity: 1,
-                          }
-                        : {
-                            opacity: 0,
-                          },
-                    ]}
-                  />
-                </ListItemButton>
-              </ListItem>
+                      />
+                      {item.name === "Blog" ? (
+                        blogOpen ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )
+                      ) : referralOpen ? (
+                        <ExpandLessIcon />
+                      ) : (
+                        <ExpandMoreIcon />
+                      )}
+                    </ListItemButton>
+
+                    {(item.name === "Blog" && blogOpen) ||
+                    (item.name === "Referral" && referralOpen) ? (
+                      <Box sx={{ pl: 4 }}>
+                        {item.name === "Blog" ? (
+                          <>
+                            <ListItemButton onClick={() => navigate("/blog")}>
+                              <ListItemIcon>
+                                <AssignmentIcon />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary="Blog"
+                                // sx={{ opacity: isOpen ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                            <ListItemButton
+                              onClick={() => navigate("/employee-blog")}
+                            >
+                              <ListItemIcon>
+                                <ContactEmergencyIcon />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary="Employee Blog"
+                                // sx={{ opacity: isOpen ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                          </>
+                        ) : (
+                          <>
+                            <ListItemButton
+                              onClick={() => navigate("/referral")}
+                            >
+                              <ListItemIcon>
+                                <Diversity3Icon />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary="Referral System"
+                                // sx={{ opacity: isOpen ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                            <ListItemButton
+                              onClick={() => navigate("/referral-list")}
+                            >
+                              <ListItemIcon>
+                                <ReferralIcon />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary="Referral List"
+                                // sx={{ opacity: isOpen ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                            <ListItemButton
+                              onClick={() => navigate("/assign-list")}
+                            >
+                              <ListItemIcon>
+                                <ReferralIcon />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary="Assign List"
+                                // sx={{ opacity: isOpen ? 1 : 0 }}
+                              />
+                            </ListItemButton>
+                          </>
+                        )}
+                      </Box>
+                    ) : null}
+                  </>
+                ) : (
+                  // Regular list items (non-dropdown)
+                  <ListItemButton onClick={() => navigate(item.path)}>
+                    <ListItemIcon>
+                      {/* <BlogIcon /> */}
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.name}
+                      // sx={{ opacity: isOpen ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                )}
+              </div>
             ))}
           </List>
+          <Divider />
         </Drawer>
       </Box>
       {/* )} */}

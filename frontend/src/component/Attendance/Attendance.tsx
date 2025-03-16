@@ -33,6 +33,7 @@ import {
 } from "../../store/calenderSlice.tsx";
 import { getDetails } from "../../store/employeeSlice.tsx";
 import Loading from "../Loading/Loading.tsx";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 interface propsType {
   isClicked: boolean;
@@ -49,6 +50,10 @@ const CalendarGrid = styled(Box)(({ theme }) => ({
   gridTemplateColumns: "repeat(7, 1fr)",
   gap: theme.spacing(1),
   marginTop: theme.spacing(2),
+
+  [theme.breakpoints.down("sm")]: {
+    gridTemplateColumns: "1fr", // Single column layout on small screens
+  },
 }));
 
 const CalendarDay = styled(Paper)(({ theme, isToday, hasEvents, days }) => ({
@@ -98,13 +103,17 @@ const Attendance = ({ isClicked }: propsType) => {
   const isloading = useSelector<RootState>(
     (state) => state.employee.personalDetailsLoading
   );
+
   const newData = data
-    ?.map((item) => JSON.parse(item.calender_data))
+    ?.map((item) => item.calendar_data)
     ?.map((item) => ({
       ...item,
       start: dayjs(item.start),
       end: dayjs(item.end),
     }));
+
+  console.log("Data", data, newData);
+
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [events, setEvents] = useState(initialEvents);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -117,6 +126,8 @@ const Attendance = ({ isClicked }: propsType) => {
     severity: "success",
   });
 
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const role = localStorage.getItem("role");
   const [eventForm, setEventForm] = useState({
     title: "",
@@ -359,6 +370,35 @@ const Attendance = ({ isClicked }: propsType) => {
       );
 
       return (
+        // <CalendarDay
+        //   key={day.toString()}
+        //   onClick={() => handleDateClick(day)}
+        //   isToday={day.isSame(dayjs(), "day")}
+        //   days={day.format("D")}
+        //   hasEvents={dayEvents.length > 0}
+        // >
+        //   <Typography variant="body2">{day.format("D")}</Typography>
+        //   {dayEvents?.map((event) => (
+        //     <Box
+        //       key={event.id}
+        //       sx={{
+        //         backgroundColor: eventTypes.find((t) => t.id === event.type)
+        //           ?.color,
+        //         color: "white",
+        //         padding: "2px 4px",
+        //         borderRadius: "4px",
+        //         marginTop: "2px",
+        //         fontSize: "12px",
+        //       }}
+        //       onClick={(e) => {
+        //         e.stopPropagation();
+        //         handleEditEvent(event);
+        //       }}
+        //     >
+        //       {event.title}
+        //     </Box>
+        //   ))}
+        // </CalendarDay>
         <CalendarDay
           key={day.toString()}
           onClick={() => handleDateClick(day)}
@@ -366,7 +406,16 @@ const Attendance = ({ isClicked }: propsType) => {
           days={day.format("D")}
           hasEvents={dayEvents.length > 0}
         >
-          <Typography variant="body2">{day.format("D")}</Typography>
+          {isSmallScreen ? (
+            // Show full day, date, month on small screens
+            <Typography variant="body2">
+              {day.format("dddd, D-MMMM")}
+            </Typography>
+          ) : (
+            // Show only the date on larger screens
+            <Typography variant="body2">{day.format("D")}</Typography>
+          )}
+
           {dayEvents?.map((event) => (
             <Box
               key={event.id}

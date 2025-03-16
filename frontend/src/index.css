@@ -1,5 +1,5 @@
 * {
-  /* overflow: auto !important; */
+  box-sizing: border-box;
 }
 body {
   margin: 0;
@@ -8,6 +8,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: auto !important;
 }
 
 code {
@@ -27,4 +28,7 @@ code {
 
 .fr-box.fr-basic .fr-wrapper {
   top: -1px !important;
+}
+.css-1lwhjos-MuiPaper-root-MuiDrawer-paper {
+  position: fixed !important;
 }

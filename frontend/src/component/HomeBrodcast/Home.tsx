@@ -121,11 +121,12 @@ const Home = () => {
   console.log(decodedBlogs, "Decoded Data");
 
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       {allBlogLoading ? (
         <Loading />
       ) : (
-        <Container>
+        // <Container>
+        <Box>
           {decodedBlogs.map((decodedData, index) => (
             <Card
               key={index}
@@ -140,7 +141,8 @@ const Home = () => {
               <FroalaEditorView model={decodedData} />
             </Card>
           ))}
-        </Container>
+        </Box>
+        //  </Container>
       )}
     </Box>
   );

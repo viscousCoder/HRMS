@@ -60,7 +60,7 @@ async function createEmployeeLeaveTable(existingUsers) {
   try {
     const db = await getConnection();
     await db.query(
-      `INSERT INTO employees_leaves(employee_id,casual_leaves,earned_leaves,breavement_leaves,sick_leaves,maternity_leaves,total_leaves)
+      `INSERT INTO employees_leaves(employee_id,casual_leaves,earned_leaves,bereavement_leaves,sick_leaves,maternity_leaves,total_leaves)
 VALUES ($1,10,0,4,4,0,18)`,
       [existingUsers]
     );
@@ -572,7 +572,7 @@ async function getAllBlobs(req, res) {
       });
     }
 
-    console.log(rows, "Retrieved blobs with all employee details");
+    // console.log(rows, "Retrieved blobs with all employee details");
     res.status(200).json({
       message: "Blobs and all employee details retrieved successfully",
       data: rows,

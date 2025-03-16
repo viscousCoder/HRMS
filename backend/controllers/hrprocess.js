@@ -70,7 +70,7 @@ async function handleUpdateEmployeeDeatils(req, res) {
 /**updating employee leaves Deatils */
 async function handleUpdateEmployeeLeaves(req, res) {
   const {
-    breavement_leaves,
+    bereavement_leaves,
     casual_leaves,
     earned_leaves,
     maternity_leaves,
@@ -82,14 +82,14 @@ async function handleUpdateEmployeeLeaves(req, res) {
   try {
     const db = await getConnection();
     const { rows: employeeDetail } = await db.query(
-      `UPDATE employees_leaves SET  breavement_leaves=$1,
+      `UPDATE employees_leaves SET  bereavement_leaves=$1,
         casual_leaves=$2,
         earned_leaves=$3,
         maternity_leaves=$4,
         sick_leaves=$5,
         total_leaves=$6 WHERE employee_id=$7 RETURNING *`,
       [
-        breavement_leaves,
+        bereavement_leaves,
         casual_leaves,
         earned_leaves,
         maternity_leaves,

@@ -9,6 +9,7 @@ import {
   selectEmployeeDeatils,
 } from "../../../store/hrSlice.tsx";
 import EmployeeLeavesDetailsView from "../Views/EmployeeLeavesDetailsView.tsx";
+import Loading from "../../Loading/Loading.tsx";
 
 type EmployeeData = {
   employeefirstname: string;
@@ -32,6 +33,9 @@ const EmployeeLeavesDetailsData: React.FC = () => {
 
   const { id } = useParams();
   const data = useSelector<RootState>((state) => state.hr.selectEmployeeData);
+  const loading = useSelector<RootState>(
+    (state) => state.hr.selectEmployeeLoading
+  );
 
   useEffect(() => {
     setEmployee(data);
@@ -69,7 +73,7 @@ const EmployeeLeavesDetailsData: React.FC = () => {
       // Recalculate the total field after the update
       updatedEmployee.total_leaves =
         updatedEmployee.casual_leaves +
-        updatedEmployee.breavement_leaves +
+        updatedEmployee.bereavement_leaves +
         updatedEmployee.earned_leaves +
         updatedEmployee.maternity_leaves +
         updatedEmployee.sick_leaves;
@@ -81,13 +85,19 @@ const EmployeeLeavesDetailsData: React.FC = () => {
   };
 
   return (
-    <EmployeeLeavesDetailsView
-      employee={employee}
-      handleEditClick={handleEditClick}
-      handleInputChange={handleInputChange}
-      editMode={editMode}
-      handleSaveClick={handleSaveClick}
-    />
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <EmployeeLeavesDetailsView
+          employee={employee}
+          handleEditClick={handleEditClick}
+          handleInputChange={handleInputChange}
+          editMode={editMode}
+          handleSaveClick={handleSaveClick}
+        />
+      )}
+    </>
   );
 };
 

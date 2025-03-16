@@ -8,7 +8,7 @@ async function handleAuthetication(req, res, next) {
     return next();
   }
   const employee = await handleCheckingToken(token);
-
+  console.log(employee, "Dataemployee");
   req.employee = employee;
 
   return next();

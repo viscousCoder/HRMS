@@ -63,10 +63,10 @@ const EmployeeLeavesDetailsView = ({
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              name="breavement_leaves"
-              label="Breavement Leaves"
+              name="bereavement_leaves"
+              label="Bereavement Leaves"
               fullWidth
-              value={employee?.breavement_leaves}
+              value={employee?.bereavement_leaves}
               // onChange={handleInputChange}
               onChange={isHr ? handleInputChange : null}
             />
