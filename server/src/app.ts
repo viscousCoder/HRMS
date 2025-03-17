@@ -117,7 +117,8 @@ const port = process.env.SERVERPORT || 3000;
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "https://rainbow-kitsune-0d972c.netlify.app/",
     methods: ["PUT", "POST", "DELETE", "GET", "PATCH"],
     credentials: true,
   })
